@@ -8,9 +8,12 @@ struct FixedArray<T> {
 }
 
 impl<T> FixedArray<T> {
-    fn push(&mut self, t: T) -> bool {
+    fn push(&mut self, data: T) -> bool {
         let mut v = self.index.compare_and_swap(self.size, self.last, Ordering::Relaxed);
         if v == self.size {
+            /*
+             * cas is true
+             * */
             return false;
         } else {
             /*
@@ -20,12 +23,34 @@ impl<T> FixedArray<T> {
             if v == self.last {
                 return false;
             }
+            /*
+             * < size
+             * */
         }
+        self.datas[v] = data;
         return true;
     }
 
-    fn pop(&mut self) -> Option<T> {
-        unimplemented!();
+    pub fn get(&mut self, index: u32) -> Option<T> {
+        let mut v = self.index.compare_and_swap(self.size, self.last, Ordering::Relaxed);
+        if v == self.size {
+            /*
+             * cas is true
+             * */
+            return None;
+        } else {
+            /*
+             * > size
+             * */
+            v = self.index.compare_and_swap(self.last, self.last, Ordering::Relaxed);
+            if v == self.last {
+                return None;
+            }
+            /*
+             * < size
+             * */
+        }
+        Some(self.datas[v])
     }
 
     pub fn new(size: u32) -> Self {
