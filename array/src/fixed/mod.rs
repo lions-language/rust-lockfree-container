@@ -63,3 +63,14 @@ impl<T> FixedArray<T> {
     }
 }
 
+//////////////////////////////////
+pub struct LoopArray {
+}
+
+impl LoopArray {
+    pub fn new() -> Self {
+        Self {
+        }
+    }
+}
+
