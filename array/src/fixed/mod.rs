@@ -55,7 +55,7 @@ impl<T> FixedArray<T> {
 
     pub fn new(size: u32) -> Self {
         Self {
-            datas: vec![T; size],
+            datas: vec![atomic.AtomicPtr<T>; size],
             index: AtomicU32::new(0),
             size: size,
             last: size+1
